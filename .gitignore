@@ -7,3 +7,5 @@ build/
 tmp/
 temp/
 coverage/*
+/.vscode
+/persistence
