@@ -1,11 +1,10 @@
 import type {Context} from "koa"
+import ms from "ms"
 
-import {PrismaClient} from "@prisma/client"
-//import prismaClient from '@utils/prismaClient.js'
-import {IReqUserBody} from "@utils/IReqBody.js"
-import {comparePassword, generateBothTokens} from '../utils/jwtHandler.js';
-
-const prismaClient = new PrismaClient();
+import prismaClient from '@utils/prismaClient.js'
+import redisClient from "@utils/redisClient.js"
+import {IReqUserBody} from "@utils/auth/IReqBody.js"
+import {comparePassword, generateBothTokens} from '@utils/auth/jwtHandler.js';
 
 async function signInHandler(ctx: Context): Promise<any> {
     
@@ -14,31 +13,33 @@ async function signInHandler(ctx: Context): Promise<any> {
     const findedUser = await prismaClient.user.findUnique({
         where: {email:user.email}
     });
-
+    
     if(!findedUser){
-        ctx.throw(400,"user doesn't exists")
+        ctx.throw(404, "user doesn't exists");
     }
- 
+
     if(!await comparePassword(user.pass,findedUser.pass)){
-        ctx.throw(401,"email or password are incorrect")
+        ctx.throw(401, "email or password are incorrect")
     }
 
-
-    const {accessToken,refreshToken} = generateBothTokens({email:user.email,userId: findedUser.id});    
-     
+    const {accessToken,refreshToken,refreshExpiration} = generateBothTokens(
+        {email:user.email,userId: findedUser.id}
+    );    
+    
+    await redisClient.set(findedUser.id, refreshToken,{
+        EX: ms(refreshExpiration) / 1000
+    });  
+    
     ctx.status = 201;
     ctx.body={
-        message: `authenticated`,
+        message: 'authenticated',
         data: {
             accessToken,
             refreshToken,
             name: findedUser.name,
             email: findedUser.email,
-            userID: findedUser.id,
-            createdAt: findedUser.createdAt
         }
     };
-
 }
 
 export default signInHandler;

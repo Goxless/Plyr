@@ -4,7 +4,9 @@ import cors from "@koa/cors";
 import 'dotenv/config'
 import chalk from 'chalk'
 import logger from 'koa-logger'
+
 import mainRoute from "./modules/mainRoute.js"
+import errorPicker from "@utils/errorPicker.js";
 
 
 const app = new Koa();
@@ -14,6 +16,8 @@ const PORT = parseInt(process.env.PORT ? process.env.PORT : "") || 7001;
 app.use(cors({  origin:"*" }));
 
 app.use(bodyParser());
+
+app.use(errorPicker);
 
 app.use(logger());
 

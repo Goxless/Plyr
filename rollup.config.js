@@ -1,6 +1,6 @@
 
 import typescript from "@rollup/plugin-typescript";
-import { nodeResolve } from '@rollup/plugin-node-resolve';
+import run from "@rollup/plugin-run"
 
 export default {
 	input: 'src/server.ts',
@@ -10,7 +10,8 @@ export default {
 		format: 'esm'
 	},
     plugins: [
-		typescript()
+		typescript(),
+		run()
 	]
 		
 };

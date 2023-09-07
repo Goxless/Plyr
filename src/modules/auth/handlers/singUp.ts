@@ -1,26 +1,20 @@
 import type {Context} from "koa"
-import {PrismaClient} from "@prisma/client"
+import ms from "ms"
 
-import {IReqUserBody} from "@utils/IReqBody.js"
-//import prismaClient from '@utils/prismaClient.js'
-import {generateBothTokens,hashPassword} from '../utils/jwtHandler.js';
+import {IReqUserBody} from "@utils/auth/IReqBody.js"
+import redisClient from "@utils/redisClient.js"
+import prismaClient from '@utils/prismaClient.js'
+import {generateBothTokens,hashPassword} from '@utils/auth/jwtHandler.js';
 
-
-const prismaClient = new PrismaClient();
-// const redis = createClient({
-//     host:  ,
-//     port: 
-
-// });
 
 async function signUpHandler(ctx: Context): Promise<any> {
-    
+
     const user = <IReqUserBody>ctx.request.body;
 
     const findedUser = await prismaClient.user.findUnique({
         where: {email:user.email}
     });
-
+    
     if(findedUser){
         ctx.throw(400,"user already exists");
     }
@@ -33,12 +27,11 @@ async function signUpHandler(ctx: Context): Promise<any> {
         }
     });
 
-    console.log(createdUser);
+    const {accessToken,refreshToken,refreshExpiration} = generateBothTokens({email:user.email,userId: createdUser.id});    
 
-    const {accessToken,refreshToken} = generateBothTokens({email:user.email,userId: createdUser.id});    
-
-    // TODO: закинуть refresh токен в redis
-
+    await redisClient.set(createdUser.id, refreshToken,{
+        EX: ms(refreshExpiration) / 1000
+    });  
 
     ctx.status = 201;
     ctx.body={
@@ -48,7 +41,6 @@ async function signUpHandler(ctx: Context): Promise<any> {
             user:{
                 name: createdUser.name,
                 email: createdUser.email,
-                userID: createdUser.id,
                 createdAt: createdUser.createdAt
             }
         }

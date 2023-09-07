@@ -9,5 +9,4 @@ temp/
 coverage/*
 /.vscode
 /persistence
-/build
 /dist

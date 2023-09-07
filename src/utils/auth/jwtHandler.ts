@@ -39,8 +39,8 @@ export function generateBothTokens (  payload: object,
                             accessTokenExpiresIn:string = defaultAccessTTL,
                             refreshTokenExpiresIn:string = defaultRefreshTTL): {accessToken:string,refreshToken:string,accessExpiration:string,refreshExpiration:string} {
     return {
-        accessToken: jwt.sign(payload, jwtRefreshSignature, { expiresIn: accessTokenExpiresIn}),
-        refreshToken: jwt.sign(payload, jwtAccessSignature, { expiresIn: refreshTokenExpiresIn}),
+        accessToken: jwt.sign(payload, jwtAccessSignature, { expiresIn: accessTokenExpiresIn}),
+        refreshToken: jwt.sign(payload,jwtRefreshSignature , { expiresIn: refreshTokenExpiresIn}),
         accessExpiration:accessTokenExpiresIn,
         refreshExpiration:refreshTokenExpiresIn
     };
@@ -51,12 +51,12 @@ export function generateBothTokens (  payload: object,
     * @param token
     * @returns decoded token or undefined value
 */
-export function verifyToken (token: string): object | undefined {
+export function verifyAccessToken (token: string): string | undefined {
     try {
         const decoded = jwt.verify(token, jwtAccessSignature);
-        return <object>decoded;
+        return <string>decoded;
     } catch (err) {
-    return undefined;
+        throw err;
     }
 };
 
