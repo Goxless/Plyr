@@ -7,6 +7,8 @@
     "paths": {
       "@utils/*": ["src/utils/*"],
       "@modules/*": ["src/modules/*"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@validationSchemas/*": ["src/utils/validationSchemas/*"],
     },
 
     /* Visit https://aka.ms/tsconfig to read more about this file */

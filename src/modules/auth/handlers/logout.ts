@@ -5,7 +5,6 @@ import prismaClient from '@utils/prismaClient.js'
 import {IReqUserBody} from "@utils/auth/IReqBody.js"
 import {comparePassword, generateBothTokens} from '@utils/auth/jwtHandler.js';
 
-//const prismaClient = new PrismaClient();
 
 async function logoutHandler(ctx: Context): Promise<any> {
 
@@ -14,14 +13,14 @@ async function logoutHandler(ctx: Context): Promise<any> {
     const findedUser = await prismaClient.user.findUnique({
         where: {email:userFromToken.email}
     });
-
+    
     if(!findedUser)
-        ctx.throw(400,"no such logged in user");
+        ctx.throw(401, 'no such user');
     
     const currentRefreshToken = await redisClient.get(findedUser.id);
     
     if(!currentRefreshToken)
-        ctx.throw(400,"session expired. Log in again");
+        ctx.throw( 400, "session expired. Log in again");
     
     redisClient.del(findedUser.id);
 

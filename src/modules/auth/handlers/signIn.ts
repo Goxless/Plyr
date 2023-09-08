@@ -14,9 +14,8 @@ async function signInHandler(ctx: Context): Promise<any> {
         where: {email:user.email}
     });
     
-    if(!findedUser){
+    if(!findedUser)
         ctx.throw(404, "user doesn't exists");
-    }
 
     if(!await comparePassword(user.pass,findedUser.pass)){
         ctx.throw(401, "email or password are incorrect")

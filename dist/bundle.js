@@ -4,6 +4,7 @@ import cors from '@koa/cors';
 import 'dotenv/config';
 import chalk from 'chalk';
 import logger from 'koa-logger';
+import koaValidator from 'koa-async-validator';
 import Router from 'koa-router';
 import ms from 'ms';
 import redis from 'redis';
@@ -44,13 +45,8 @@ function generateBothTokens(payload, accessTokenExpiresIn = defaultAccessTTL, re
     * @returns decoded token or undefined value
 */
 function verifyAccessToken(token) {
-    try {
-        const decoded = jwt.verify(token, jwtAccessSignature);
-        return decoded;
-    }
-    catch (err) {
-        throw err;
-    }
+    const decoded = jwt.verify(token, jwtAccessSignature);
+    return decoded;
 }
 /**
     * hashes password :/
@@ -108,9 +104,8 @@ async function signInHandler(ctx) {
     const findedUser = await prismaClient.user.findUnique({
         where: { email: user.email }
     });
-    if (!findedUser) {
+    if (!findedUser)
         ctx.throw(404, "user doesn't exists");
-    }
     if (!await comparePassword(user.pass, findedUser.pass)) {
         ctx.throw(401, "email or password are incorrect");
     }
@@ -130,14 +125,13 @@ async function signInHandler(ctx) {
     };
 }
 
-//const prismaClient = new PrismaClient();
 async function logoutHandler(ctx) {
     const userFromToken = ctx.state.decodedToken;
     const findedUser = await prismaClient.user.findUnique({
         where: { email: userFromToken.email }
     });
     if (!findedUser)
-        ctx.throw(400, "no such logged in user");
+        ctx.throw(401, 'no such user');
     const currentRefreshToken = await redisClient.get(findedUser.id);
     if (!currentRefreshToken)
         ctx.throw(400, "session expired. Log in again");
@@ -149,18 +143,86 @@ async function logoutHandler(ctx) {
 }
 
 async function verifyAuthorization(ctx, next) {
-    if (!ctx.header.authorization)
-        ctx.throw(401, "No authorization header or parameter has wrong value");
-    const token = ctx.header.authorization.split(' ')[1];
-    const decoded = verifyAccessToken(token);
-    ctx.state.decodedToken = decoded;
-    await next();
+    try {
+        ctx.assert(ctx.header.authorization, 401, "No authorization header or parameter has wrong value");
+        const token = ctx.header.authorization.split(' ')[1];
+        const decoded = verifyAccessToken(token);
+        ctx.state.decodedToken = decoded;
+        await next();
+    }
+    catch (err) {
+        ctx.throw(401, err.message);
+    }
 }
 
+function validateSchema(schema) {
+    return async (ctx, next) => {
+        ctx.check(schema);
+        const logs = await ctx.validationErrors(true); //returns false if everything is fine
+        if (!!logs)
+            ctx.throw(400, JSON.stringify(logs));
+        await next(ctx);
+    };
+}
+
+const logoutSchema = {};
+
+const signInSchema = {
+    email: {
+        in: 'body',
+        notEmpty: true,
+        isEmail: {
+            errorMessage: 'Invalid Email'
+        }
+    },
+    name: {
+        in: 'body',
+        notEmpty: true,
+        isLength: {
+            options: [{ min: 3, max: 20 }],
+            errorMessage: 'Name must be between 3 and 20 characters long'
+        },
+    },
+    pass: {
+        in: 'body',
+        notEmpty: true,
+        isLength: {
+            options: [{ min: 6, max: 20 }],
+            errorMessage: 'Password must be between 6 and 20 characters long'
+        },
+    }
+};
+
+const signUpSchema = {
+    email: {
+        in: 'body',
+        notEmpty: true,
+        isEmail: {
+            errorMessage: 'Invalid Email'
+        }
+    },
+    name: {
+        in: 'body',
+        notEmpty: true,
+        isLength: {
+            options: [{ min: 3, max: 20 }],
+            errorMessage: 'Name must be between 3 and 20 characters long'
+        },
+    },
+    pass: {
+        in: 'body',
+        notEmpty: true,
+        isLength: {
+            options: [{ min: 6, max: 20 }],
+            errorMessage: 'Password must be between 6 and 20 characters long'
+        },
+    },
+};
+
 const authRoute = new Router({ prefix: "/auth" });
-authRoute.post('/signin', signInHandler)
-    .post("/signup", signUpHandler)
-    .post("/logout", verifyAuthorization, logoutHandler);
+authRoute.post("signin", '/signin', validateSchema(signInSchema), signInHandler)
+    .post("signup", "/signup", validateSchema(signUpSchema), signUpHandler)
+    .post("logout", "/logout", validateSchema(logoutSchema), verifyAuthorization, logoutHandler);
 var authRoute$1 = authRoute.routes();
 
 const mainRoute = new Router({ prefix: "/v1" });
@@ -182,6 +244,7 @@ const app = new Koa();
 const PORT = parseInt(process.env.PORT ? process.env.PORT : "") || 7001;
 app.use(cors({ origin: "*" }));
 app.use(bodyParser());
+app.use(koaValidator([]));
 app.use(errorPicker);
 app.use(logger());
 app.use(mainRoute.allowedMethods());

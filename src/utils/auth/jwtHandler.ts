@@ -52,12 +52,8 @@ export function generateBothTokens (  payload: object,
     * @returns decoded token or undefined value
 */
 export function verifyAccessToken (token: string): string | undefined {
-    try {
-        const decoded = jwt.verify(token, jwtAccessSignature);
-        return <string>decoded;
-    } catch (err) {
-        throw err;
-    }
+    const decoded = jwt.verify(token, jwtAccessSignature);
+    return <string>decoded;
 };
 
 /**
@@ -67,7 +63,7 @@ export function verifyAccessToken (token: string): string | undefined {
 */
 export function hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
-    };
+};
 
 /**
     * compares given password with hashed value
