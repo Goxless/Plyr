@@ -1,0 +1,9 @@
+/node_modules/*
+/backup/*
+dist
+build
+tmp
+temp
+coverage
+.vscode
+persistence
