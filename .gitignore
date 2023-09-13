@@ -3,11 +3,10 @@
 .idea/*
 /backup/*
 *.log
+dist/
 build/
 tmp/
 temp/
 coverage/*
-/.vscode
-/persistence
-/build
-/dist
+.vscode/
+persistence/
