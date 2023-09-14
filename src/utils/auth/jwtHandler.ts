@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
 
 const defaultAccessTTL: string = '2h';
 const defaultRefreshTTL: string = '30d';
@@ -40,7 +39,7 @@ export function generateRefreshToken(
  * @param [expiresIn(refresh) = default TTL parameter]
  * @returns object including access and refresh tokens
  */
-export function generateBothTokens(
+export const generateTokens = (
     payload: object,
     accessTokenExpiresIn: string = defaultAccessTTL,
     refreshTokenExpiresIn: string = defaultRefreshTTL
@@ -49,40 +48,21 @@ export function generateBothTokens(
     refreshToken: string;
     accessExpiration: string;
     refreshExpiration: string;
-} {
+} => {
     return {
         accessToken: jwt.sign(payload, jwtAccessSignature, { expiresIn: accessTokenExpiresIn }),
         refreshToken: jwt.sign(payload, jwtRefreshSignature, { expiresIn: refreshTokenExpiresIn }),
         accessExpiration: accessTokenExpiresIn,
         refreshExpiration: refreshTokenExpiresIn,
     };
-}
+};
 
-/**
- * Synchronously verify given token using a secret or a public key to get a decoded token token - JWT string to verify secretOrPublicKey - Either the secret for HMAC algorithms, or the PEM encoded public key for RSA and ECDSA
- * @param token
- * @returns decoded token or undefined value
- */
-export function verifyAccessToken(token: string): string | undefined {
-    const decoded = jwt.verify(token, jwtAccessSignature);
-    return <string>decoded;
-}
-
-/**
- * hashes password :/
- * @param password
- * @returns promise
- */
-export function hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 10);
-}
-
-/**
- * compares given password with hashed value
- * @param password
- * @param hash
- * @returns promise
- */
-export function comparePassword(password: string, hash: string): Promise<boolean> {
-    return bcrypt.compare(password, hash);
-}
+// /**
+//  * Synchronously verify given token using a secret or a public key to get a decoded token token - JWT string to verify secretOrPublicKey - Either the secret for HMAC algorithms, or the PEM encoded public key for RSA and ECDSA
+//  * @param token
+//  * @returns decoded token or undefined value
+//  */
+// export function verifyAccessToken(token: string): string | undefined {
+//     const decoded = jwt.verify(token, jwtAccessSignature);
+//     return <string>decoded;
+// }

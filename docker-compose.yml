@@ -1,38 +1,36 @@
 version: '3.8'
 
 services:
+    myLittlePostgres:
+        image: postgres:latest
+        container_name: 'MKTplcDB'
+        environment:
+            POSTGRES_DB: ${PG_DB_NAME}
+            POSTGRES_USER: ${PG_USER}
+            POSTGRES_PASSWORD: ${PG_PASSWORD}
+            PGDATA: '/var/lib/postgresql/data/pgdata'
+        ports:
+            - ${DATABASE_PORT}:5432
+        volumes:
+            - './persistence/posgtres:/var/lib/postgresql/data'
+        # healthcheck:
+        #   test: ["CMD-SHELL", "pg_isready -U root -d MKTplcDB"]
+        #   interval: 10s
+        #   timeout: 5s
+        #   retries: 5
+        #   start_period: 10s
+        # restart: always
 
-  myLittlePostgres:
-    image: postgres:latest
-    container_name: "MKTplcDB"
-    environment:
-      POSTGRES_DB: ${PG_DB_NAME}
-      POSTGRES_USER: ${PG_USER}
-      POSTGRES_PASSWORD: ${PG_PASSWORD}
-      PGDATA: "/var/lib/postgresql/data/pgdata"
-    ports: 
-      - ${DATABASE_PORT}:5432
-    volumes: 
-      - "./persistence/posgtres:/var/lib/postgresql/data"
-    # healthcheck:
-    #   test: ["CMD-SHELL", "pg_isready -U root -d MKTplcDB"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
-    #   start_period: 10s
-    # restart: always
-
-  redisnuts: 
-    image: redis:latest
-    container_name: "redisDev"
-    ports:
-      - ${CACHE_PORT}:6379
-    volumes: 
-      - "./persistence/redis:/data"
-    # restart: always
-    # healthcheck:
-    #   test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
-    #   interval: 1s
-    #   timeout: 5s
-    #   retries: 5
-
+    redisnuts:
+        image: redis:latest
+        container_name: 'redisDev'
+        ports:
+            - 6379:6379
+        volumes:
+            - './persistence/redis:/data'
+        # restart: always
+        # healthcheck:
+        #   test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+        #   interval: 1s
+        #   timeout: 5s
+        #   retries: 5

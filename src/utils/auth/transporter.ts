@@ -1,6 +1,3 @@
-import nodemailer from 'nodemailer';
-import 'dotenv/config';
-
 const { SMTP_HOST, SMTP_PORT, MAILER_USER, MAILER_PASS } = process.env;
 
 const transportConfig = {
@@ -16,9 +13,8 @@ const transportConfig = {
 const transporter = nodemailer.createTransport(transportConfig);
 
 async function sendEmail(recipient: string, link: string): Promise<object> {
-
     const info = await transporter.sendMail({
-        from: 'itsMeMario@test.com',
+        from: 'kirill@voloshinp.ru',
         to: recipient,
         subject: 'Reset link',
         text: `Here is your reset link: ${link}`,

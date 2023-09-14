@@ -3,11 +3,10 @@ import ms from 'ms';
 
 import prismaClient from '@/utils/DBClients/prismaClient';
 import redisClient from '@/utils/DBClients/redisClient';
-import { IReqUserBody } from '@utils/auth/IReqBody';
+import { IReqUserBody } from '@/utils/auth/IReqBody';
 import { comparePassword, generateBothTokens } from '@utils/auth/jwtHandler';
 
 async function signInHandler(ctx: Context): Promise<any> {
-    
     const user = <IReqUserBody>ctx.request.body;
 
     const findedUser = await prismaClient.user.findUnique({
