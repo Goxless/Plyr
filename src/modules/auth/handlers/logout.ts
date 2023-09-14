@@ -1,7 +1,7 @@
 import type { Context } from 'koa';
 
-import redisClient from '@utils/redisClient';
-import prismaClient from '@utils/prismaClient';
+import redisClient from '@/utils/DBClients/redisClient';
+import prismaClient from '@/utils/DBClients/prismaClient';
 import { IReqUserBody } from '@utils/auth/IReqBody';
 import { comparePassword, generateBothTokens } from '@utils/auth/jwtHandler';
 

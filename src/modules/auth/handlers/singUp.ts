@@ -2,8 +2,8 @@ import type { Context } from 'koa';
 import ms from 'ms';
 
 import { IReqUserBody } from '@utils/auth/IReqBody';
-import redisClient from '@utils/redisClient';
-import prismaClient from '@utils/prismaClient';
+import redisClient from '@/utils/DBClients/redisClient';
+import prismaClient from '@/utils/DBClients/prismaClient';
 import { generateBothTokens, hashPassword } from '@utils/auth/jwtHandler.js';
 
 async function signUpHandler(ctx: Context): Promise<any> {
