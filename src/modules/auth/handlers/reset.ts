@@ -1,14 +1,16 @@
+/** @module types */
 import type { Context } from 'koa';
 
-import redisClient from '@/utils/DBClients/redisClient';
-import { IReqUserBody } from '@utils/auth/IReqBody';
-import prismaClient from '@/utils/DBClients/prismaClient';
-import { generateBothTokens, hashPassword } from '@utils/auth/jwtHandler.js';
+/** @module libs */
+import redisClient from '@/utils/redisClient';
+import prismaClient from '@/utils/prismaClient';
+import { hashPassword } from '@/libs/utils/password';
+import { body } from '@/libs/interfaces/body';
 
-async function resetHandler(ctx: Context): Promise<any> {
+export const reset = async (ctx: Context): Promise<any> => {
     const linkId = ctx.params.link;
 
-    const user = <IReqUserBody>ctx.request.body;
+    const user = <body>ctx.request.body;
 
     const userId = await redisClient.get(linkId);
 
@@ -27,6 +29,4 @@ async function resetHandler(ctx: Context): Promise<any> {
     ctx.body = {
         message: `Password updated`,
     };
-}
-
-export default resetHandler;
+};

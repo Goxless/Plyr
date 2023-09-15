@@ -1,13 +1,18 @@
+/** @module type */
 import type { Context } from 'koa';
+
+/** @module npm */
 import ms from 'ms';
 
-import prismaClient from '@/utils/DBClients/prismaClient';
-import redisClient from '@/utils/DBClients/redisClient';
-import { IReqUserBody } from '@/utils/auth/IReqBody';
-import { comparePassword, generateBothTokens } from '@utils/auth/jwtHandler';
+/** @module libs */
+import prismaClient from '@/utils/prismaClient';
+import redisClient from '@/utils/redisClient';
+import {body} from '@/libs/interfaces/body';
+import {checkPassword} from "@/libs/utils/password"
+import {generateTokens} from "@/libs/utils/tokens"
 
-async function signInHandler(ctx: Context): Promise<any> {
-    const user = <IReqUserBody>ctx.request.body;
+export const signIn = async (ctx: Context): Promise<any> => {
+    const user = <body>ctx.request.body;
 
     const findedUser = await prismaClient.user.findUnique({
         where: { email: user.email },
@@ -15,11 +20,11 @@ async function signInHandler(ctx: Context): Promise<any> {
 
     if (!findedUser) ctx.throw(404, "user doesn't exists");
 
-    if (!(await comparePassword(user.pass, findedUser.pass))) {
+    if (!(await checkPassword(user.pass, findedUser.pass))) {
         ctx.throw(401, 'email or password are incorrect');
     }
 
-    const { accessToken, refreshToken, refreshExpiration } = generateBothTokens({
+    const { accessToken, refreshToken, refreshExpiration } = generateTokens({
         email: user.email,
         userId: findedUser.id,
     });
@@ -38,6 +43,4 @@ async function signInHandler(ctx: Context): Promise<any> {
             email: findedUser.email,
         },
     };
-}
-
-export default signInHandler;
+};

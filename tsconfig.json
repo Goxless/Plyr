@@ -3,7 +3,8 @@
         "baseUrl": ".",
 
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["src/*"],
+            "@config": ["src/libs/config/index.ts"]
         },
 
         /* Visit https://aka.ms/tsconfig to read more about this file */

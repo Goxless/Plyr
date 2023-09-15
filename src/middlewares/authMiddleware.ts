@@ -1,8 +1,10 @@
-import { Context, Next } from 'koa';
+/** @module types */
+import type{ Context, Next } from 'koa';
 
-import { verifyAccessToken } from '@utils/auth/jwtHandler';
+/** @module libs */
+import { verifyAccessToken } from '@/libs/utils/tokens';
 
-export async function verifyAuthorization(ctx: Context, next: Next): Promise<any> {
+export const verifyAuthorization = async (ctx: Context, next: Next): Promise<any> => {
     try {
         ctx.assert(
             ctx.header.authorization,
@@ -20,4 +22,4 @@ export async function verifyAuthorization(ctx: Context, next: Next): Promise<any
     } catch (err) {
         ctx.throw(401, (err as Error).message);
     }
-}
+};

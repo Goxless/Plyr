@@ -5,19 +5,15 @@ import type { Context } from 'koa';
 import ms from 'ms';
 
 /** @module libs */
-import redisClient from '@/utils/DBClients/redisClient';
+import redisClient from '@/utils/redisClient';
 import { hashPassword } from '@/libs/utils';
-import { prisma } from '@/utils/DBClients/prismaClient';
-import { generateTokens } from '@/utils/auth/jwtHandler.js';
+import prisma from '@/utils/prismaClient';
+import {generateTokens} from "@/libs/utils/tokens"
+import {body} from '@/libs/interfaces/body';
 
-interface Body {
-    name: string;
-    email: string;
-    pass: string;
-}
 
-export const signUp = async (ctx: Context) => {
-    const { name, email, pass } = <Body>ctx.request.body;
+export const signUp = async (ctx: Context): Promise<any> => {
+    const { name, email, pass } = <body>ctx.request.body;
 
     const findedUser = await prisma.user.findUnique({
         where: { email: email },

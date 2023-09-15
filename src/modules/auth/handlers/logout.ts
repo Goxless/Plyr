@@ -1,11 +1,14 @@
+/** @module types */
 import type { Context } from 'koa';
 
-import redisClient from '@/utils/DBClients/redisClient';
-import prismaClient from '@/utils/DBClients/prismaClient';
-import { IReqUserBody } from '@utils/auth/IReqBody';
-import { comparePassword, generateBothTokens } from '@utils/auth/jwtHandler';
+/** @module libs */
+import redisClient from '@/utils/redisClient';
+import prismaClient from '@/utils/prismaClient';
+import { body } from '@/libs/interfaces/body';
 
-async function logoutHandler(ctx: Context): Promise<any> {
+export const logout = async (ctx: Context): Promise<any> => {
+    console.log(ctx.state.decodedToken);
+
     const userFromToken = ctx.state.decodedToken;
 
     const findedUser = await prismaClient.user.findUnique({
@@ -24,6 +27,4 @@ async function logoutHandler(ctx: Context): Promise<any> {
     ctx.body = {
         message: `logged out`,
     };
-}
-
-export default logoutHandler;
+};

@@ -1,6 +1,7 @@
-import { Context, Next, HttpError } from 'koa';
+/** @module types */
+import type { Context } from 'koa';
 
-function validateSchema(schema: object) {
+export const validateSchema = (schema: object) => {
     return async (ctx: Context, next: (ctx: Context) => Promise<any>) => {
         ctx.check(schema);
 
@@ -12,5 +13,3 @@ function validateSchema(schema: object) {
         await next(ctx);
     };
 }
-
-export default validateSchema;

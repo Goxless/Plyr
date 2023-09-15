@@ -1,5 +1,6 @@
+/** @module npm */
 import redis from 'redis';
-import 'dotenv/config';
+
 
 const redisClient = redis.createClient({
     url: `redis://${process.env.REDIS_CLIENT_NAME}:${process.env.REDIS_CLIENT_PASS}

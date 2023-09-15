@@ -2,23 +2,23 @@
 import Router from 'koa-router';
 
 /** @module handlers */
-import signUpHandler from './handlers/singUp';
-import signInHandler from './handlers/signIn';
-import logoutHandler from './handlers/logout';
-import forget from './handlers/forget';
-import reset from './handlers/reset';
+import { signUp } from './handlers/signUp';
+import { signIn } from './handlers/signIn';
+import { logout } from './handlers/logout';
+import { forget } from './handlers/forget';
+import { reset } from './handlers/reset';
+import { verifyAuthorization } from '@/middlewares/authMiddleware';
 
 export const auth = () => {
     const router = new Router({ prefix: '/auth' });
 
     return (
         router
-            .post('/signin', signInHandler)
-            .post('/signup', signUpHandler)
-            .post('/logout', logoutHandler)
+            .post('/signin', signIn)
+            .post('/signup', signUp)
+            .post('/logout', verifyAuthorization, logout)
             .post('/forget', forget)
             .post('/reset/:link', reset)
-            /** */
             .routes()
     );
 };
