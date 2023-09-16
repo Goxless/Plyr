@@ -1,8 +1,9 @@
 /** @module npm */
 import jwt from 'jsonwebtoken';
 
-/** @module custom */
+/** @module libs */
 import config from '@config';
+import { payload } from '@/libs/interfaces/JWTpayload';
 
 const { jwtAccessSignature, jwtRefreshSignature, defaultAccessTTL, defaultRefreshTTL } = config;
 
@@ -12,7 +13,7 @@ export const verifyAccessToken = (token: string) => {
 };
 
 export const generateTokens = (
-    payload: object,
+    payload: payload,
     accessTokenExpiresIn: string = defaultAccessTTL,
     refreshTokenExpiresIn: string = defaultRefreshTTL
 ): {

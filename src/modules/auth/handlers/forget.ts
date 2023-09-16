@@ -9,27 +9,22 @@ import redisClient from '@/utils/redisClient';
 import prismaClient from '@/utils/prismaClient';
 import { body } from '@/libs/interfaces/body';
 import { resetMail } from '@/libs/nodemailer/api/reset';
+import { userExist } from '@/libs/utils/userExist';
 
 export const forget = async (ctx: Context): Promise<any> => {
-    const user = <body>ctx.request.body;
+    const { name, email, pass } = <body>ctx.request.body;
 
-    const findedUser = await prismaClient.user.findUnique({
-        where: { email: user.email },
-    });
-
-    if (!findedUser) ctx.throw(404, "user doesn't exists");
+    const userDB = await userExist(false, email);
 
     const linkId = uuid();
 
-    await redisClient.set(linkId, findedUser.id, {
+    await redisClient.set(linkId, userDB.id, {
         EX: 600,
     });
 
     const link = `http://${process.env.IP}:${process.env.PORT}/v1/auth/reset/${linkId}`;
 
-    const result = await resetMail(user.email, link);
-
-    console.log(result);
+    const result = await resetMail(email, link);
 
     ctx.status = 201;
     ctx.body = {

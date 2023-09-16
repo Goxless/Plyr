@@ -5,23 +5,17 @@ import type { Context } from 'koa';
 import redisClient from '@/utils/redisClient';
 import prismaClient from '@/utils/prismaClient';
 import { body } from '@/libs/interfaces/body';
+import { userExist } from '@/libs/utils/userExist';
+import { refreshExist } from '@/libs/utils/refreshExist';
 
 export const logout = async (ctx: Context): Promise<any> => {
-    console.log(ctx.state.decodedToken);
+    const { id, email } = ctx.state.decodedToken;
 
-    const userFromToken = ctx.state.decodedToken;
+    const userDB = await userExist(false, email);
 
-    const findedUser = await prismaClient.user.findUnique({
-        where: { email: userFromToken.email },
-    });
+    await refreshExist(userDB.id);
 
-    if (!findedUser) ctx.throw(401, 'no such user');
-
-    const currentRefreshToken = await redisClient.get(findedUser.id);
-
-    if (!currentRefreshToken) ctx.throw(400, 'session expired. Log in again');
-
-    redisClient.del(findedUser.id);
+    redisClient.del(userDB.id);
 
     ctx.status = 201;
     ctx.body = {

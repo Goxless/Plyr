@@ -5,32 +5,28 @@ import type { Context } from 'koa';
 import ms from 'ms';
 
 /** @module libs */
-import prismaClient from '@/utils/prismaClient';
 import redisClient from '@/utils/redisClient';
-import {body} from '@/libs/interfaces/body';
-import {checkPassword} from "@/libs/utils/password"
-import {generateTokens} from "@/libs/utils/tokens"
+import { body } from '@/libs/interfaces/body';
+import { checkPassword } from '@/libs/utils/password';
+import { generateTokens } from '@/libs/utils/tokens';
+import { userExist } from '@/libs/utils/userExist';
 
 export const signIn = async (ctx: Context): Promise<any> => {
-    const user = <body>ctx.request.body;
+    const { name, email, pass } = <body>ctx.request.body;
 
-    const findedUser = await prismaClient.user.findUnique({
-        where: { email: user.email },
-    });
+    const user = await userExist(false, email);
 
-    if (!findedUser) ctx.throw(404, "user doesn't exists");
-
-    if (!(await checkPassword(user.pass, findedUser.pass))) {
+    if (!(await checkPassword(pass, user.pass))) {
         ctx.throw(401, 'email or password are incorrect');
     }
 
     const { accessToken, refreshToken, refreshExpiration } = generateTokens({
-        email: user.email,
-        userId: findedUser.id,
+        id: user.id,
+        email,
     });
 
-    await redisClient.set(findedUser.id, refreshToken, {
-        EX: ms(refreshExpiration) / 1000,
+    await redisClient.set(user.id, refreshToken, {
+        PX: ms(refreshExpiration),
     });
 
     ctx.status = 201;
@@ -39,8 +35,8 @@ export const signIn = async (ctx: Context): Promise<any> => {
         data: {
             accessToken,
             refreshToken,
-            name: findedUser.name,
-            email: findedUser.email,
+            name: user.name,
+            email: user.email,
         },
     };
 };

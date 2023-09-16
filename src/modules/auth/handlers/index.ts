@@ -3,3 +3,4 @@ export * from './logout';
 export * from './reset';
 export * from './signIn';
 export * from './signUp';
+export * from './refresh';
