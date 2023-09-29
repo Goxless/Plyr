@@ -2,25 +2,20 @@
 import jwt from 'jsonwebtoken';
 
 /** @module libs */
-import config from '@config';
+import { config } from '@config';
 import { payload } from '@/libs/interfaces/JWTpayload';
 
-const {
-    jwtAccessSignature,
-    jwtRefreshSignature,
-    jwtDefaultAccessTTL,
-    jwtDefaultRefreshTTL,
-} = config;
+const { jwt: jwtConfig } = config;
 
 export const verifyAccessToken = (token: string) => {
-    const decoded = jwt.verify(token, jwtAccessSignature);
-    return <string>decoded;
+    const decoded = jwt.verify(token, jwtConfig.accessSignature);
+    return decoded;
 };
 
 export const generateTokens = (
     payload: payload,
-    accessTokenExpiresIn: string = jwtDefaultAccessTTL,
-    refreshTokenExpiresIn: string = jwtDefaultRefreshTTL
+    accessTokenExpiresIn: string = jwtConfig.defaultAccessTTL,
+    refreshTokenExpiresIn: string = jwtConfig.defaultRefreshTTL
 ): {
     accessToken: string;
     refreshToken: string;
@@ -28,8 +23,12 @@ export const generateTokens = (
     refreshExpiration: string;
 } => {
     return {
-        accessToken: jwt.sign(payload, jwtAccessSignature, { expiresIn: accessTokenExpiresIn }),
-        refreshToken: jwt.sign(payload, jwtRefreshSignature, { expiresIn: refreshTokenExpiresIn }),
+        accessToken: jwt.sign(payload, jwtConfig.accessSignature, {
+            expiresIn: accessTokenExpiresIn,
+        }),
+        refreshToken: jwt.sign(payload, jwtConfig.refreshSignature, {
+            expiresIn: refreshTokenExpiresIn,
+        }),
         accessExpiration: accessTokenExpiresIn,
         refreshExpiration: refreshTokenExpiresIn,
     };
@@ -37,14 +36,14 @@ export const generateTokens = (
 
 export const generateRefreshToken = (
     payload: object,
-    expirationTime: string = jwtDefaultRefreshTTL
+    expirationTime: string = jwtConfig.defaultRefreshTTL
 ): string => {
-    return jwt.sign(payload, jwtRefreshSignature, { expiresIn: expirationTime });
+    return jwt.sign(payload, jwtConfig.refreshSignature, { expiresIn: expirationTime });
 };
 
 export const generateAccessToken = (
     payload: object,
-    expirationTime: string = jwtDefaultAccessTTL
+    expirationTime: string = jwtConfig.defaultAccessTTL
 ): string => {
-    return jwt.sign(payload, jwtAccessSignature, { expiresIn: expirationTime });
+    return jwt.sign(payload, jwtConfig.accessSignature, { expiresIn: expirationTime });
 };

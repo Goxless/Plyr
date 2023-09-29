@@ -10,6 +10,9 @@ import logger from 'koa-logger';
 import { error } from './api/error';
 import { routes } from './api/routes';
 
+/** @module custom */
+import { config } from '@config';
+
 export const server = () => {
     const app = new Koa();
 
@@ -23,8 +26,8 @@ export const server = () => {
 
     app.use(routes());
 
-    app.listen(process.env.PORT, async () => {
-        console.log(chalk.bold.bgGreenBright(`server running on port: ${process.env.PORT}`));
+    app.listen(config.app.port, async () => {
+        console.log(chalk.bold.bgGreenBright(`server running on port: ${config.app.port}`));
     }).on('error', (err) => {
         console.error(chalk.bgRed.black.bold(err));
     });

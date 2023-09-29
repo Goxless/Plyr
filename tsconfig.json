@@ -4,7 +4,8 @@
 
         "paths": {
             "@/*": ["src/*"],
-            "@config": ["src/libs/config/index.ts"]
+            "@config": ["src/libs/config/index.ts"],
+
         },
 
         /* Visit https://aka.ms/tsconfig to read more about this file */

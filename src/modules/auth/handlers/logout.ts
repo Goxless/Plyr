@@ -4,7 +4,7 @@ import type { Context } from 'koa';
 /** @module libs */
 import { redis } from '@/utils/redisClient';
 import { prisma } from '@/utils/prismaClient';
-import { body } from '@/libs/interfaces/body';
+import { body } from '@/modules/auth/types/body';
 import { userExist } from '@/libs/utils/userExist';
 import { refreshExist } from '@/libs/utils/refreshExist';
 

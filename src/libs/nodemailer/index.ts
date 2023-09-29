@@ -1,14 +1,15 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { TransportOptions } from 'nodemailer';
+import { config } from '@config';
 
-const { SMTP_HOST, SMTP_PORT, MAILER_USER, MAILER_PASS } = process.env;
+const { host, port, user, pass } = config.mailer;
 
 const transportConfig = {
-    host: SMTP_HOST,
-    port: Number(SMTP_PORT),
+    host: host,
+    port: Number(port),
     secure: true,
     auth: {
-        user: MAILER_USER,
-        pass: MAILER_PASS,
+        user: user,
+        pass: pass,
     },
 };
 

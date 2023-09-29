@@ -6,7 +6,7 @@ import ms from 'ms';
 
 /** @module libs */
 import { redis } from '@/utils/redisClient';
-import { body } from '@/libs/interfaces/body';
+import { body } from '@/modules/auth/types/body';
 import { checkPassword } from '@/libs/utils/password';
 import { generateTokens } from '@/libs/utils/tokens';
 import { userExist } from '@/libs/utils/userExist';

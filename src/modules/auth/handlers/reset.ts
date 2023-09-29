@@ -5,7 +5,7 @@ import type { Context } from 'koa';
 import { redis } from '@/utils/redisClient';
 import { prisma } from '@/utils/prismaClient';
 import { hashPassword } from '@/libs/utils/password';
-import { body } from '@/libs/interfaces/body';
+import { body } from '@/modules/auth/types/body';
 
 export const reset = async (ctx: Context): Promise<any> => {
     const linkId = ctx.params.link;

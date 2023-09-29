@@ -10,7 +10,7 @@ import { hashPassword } from '@/libs/utils';
 import { prisma } from '@/utils/prismaClient';
 import { generateTokens } from '@/libs/utils/tokens';
 import { userExist } from '@/libs/utils/userExist';
-import { body } from '@/libs/interfaces/body';
+import { body } from '@/modules/auth/types/body';
 import { payload } from '@/libs/interfaces/JWTpayload';
 
 export const signUp = async (ctx: Context): Promise<any> => {
