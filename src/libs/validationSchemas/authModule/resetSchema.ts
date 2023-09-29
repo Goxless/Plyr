@@ -1,4 +1,4 @@
-const forgetSchema: object = {
+export const forgetSchema: object = {
     pass: {
         in: 'body',
         notEmpty: true,
@@ -8,5 +8,3 @@ const forgetSchema: object = {
         },
     },
 };
-
-export default forgetSchema;

@@ -1,5 +1,3 @@
-const logoutSchema: object = {
+export const logoutSchema: object = {
  
 }
-
-export default logoutSchema;

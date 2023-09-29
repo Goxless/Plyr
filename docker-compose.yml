@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-    myLittlePostgres:
+    postgres:
         image: postgres:latest
         container_name: 'MKTplcDB'
         environment:
@@ -21,7 +21,7 @@ services:
         #   start_period: 10s
         # restart: always
 
-    redisnuts:
+    redis:
         image: redis:latest
         container_name: 'redisDev'
         ports:

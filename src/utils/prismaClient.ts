@@ -1,4 +1,6 @@
 /** @module libs */
 import { PrismaClient } from '@prisma/client';
 
-export default new PrismaClient();
+const options = {};
+
+export const prisma = new PrismaClient(options);

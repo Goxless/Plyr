@@ -5,7 +5,7 @@ import type { Context } from 'koa';
 import ms from 'ms';
 
 /** @module libs */
-import redisClient from '@/utils/redisClient';
+import { redis } from '@/utils/redisClient';
 import { userExist } from '@/libs/utils/userExist';
 import { generateTokens } from '@/libs/utils/tokens';
 import { refreshExist } from '@/libs/utils/refreshExist';
@@ -22,7 +22,7 @@ export const refresh = async (ctx: Context): Promise<any> => {
         id: id,
     });
 
-    await redisClient.set(id, refreshToken, {
+    await redis.set(id, refreshToken, {
         PX: ms(refreshExpiration),
     });
 

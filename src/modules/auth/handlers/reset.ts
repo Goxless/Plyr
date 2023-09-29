@@ -2,8 +2,8 @@
 import type { Context } from 'koa';
 
 /** @module libs */
-import redisClient from '@/utils/redisClient';
-import prismaClient from '@/utils/prismaClient';
+import { redis } from '@/utils/redisClient';
+import { prisma } from '@/utils/prismaClient';
 import { hashPassword } from '@/libs/utils/password';
 import { body } from '@/libs/interfaces/body';
 
@@ -12,11 +12,11 @@ export const reset = async (ctx: Context): Promise<any> => {
 
     const user = <body>ctx.request.body;
 
-    const userId = await redisClient.get(linkId);
+    const userId = await redis.get(linkId);
 
     if (!userId) ctx.throw(404, 'invalid or expired link');
 
-    const result = await prismaClient.user.update({
+    const result = await prisma.user.update({
         where: {
             id: userId,
         },

@@ -1,13 +1,12 @@
 /** @module libs */
-import redisClient from '@/utils/redisClient';
+import { redis } from '@/utils/redisClient';
 import { payload } from '@/libs/interfaces/JWTpayload';
-import { httpError } from '@/utils/httpError';
+import { HttpError } from '@/utils/httpError';
 
 export const refreshExist = async (key: string): Promise<any> => {
-    const currentRefreshToken = await redisClient.exists(key);
+    const currentRefreshToken = await redis.exists(key);
 
-    if (!currentRefreshToken)
-        throw new httpError(400, 'session expired. Log in again');
+    if (!currentRefreshToken) throw new HttpError('session expired. Log in again', 400);
 
-    return currentRefreshToken
+    return currentRefreshToken;
 };

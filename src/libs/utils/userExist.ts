@@ -1,16 +1,18 @@
 /** @module libs */
-import prisma from '@/utils/prismaClient';
-import { payload } from '@/libs/interfaces/JWTpayload';
-import { httpError } from '@/utils/httpError';
+import { prisma } from '@/utils/prismaClient';
+import { HttpError } from '@/utils/httpError';
+import { user } from '../interfaces/userType';
 
-export const userExist = async (checkExistence: boolean, email: string): Promise<any> => {
-    const userDB = await prisma.user.findUnique({
+
+
+export const userExist = async (checkExistence: boolean, email: string): Promise<user> => {
+    const user = await prisma.user.findUnique({
         where: { email: email },
     });
 
-    if (userDB && checkExistence) throw new httpError(400, 'user already exists');
+    if (user && checkExistence) throw new HttpError('user already exists', 400);
 
-    if (!userDB && !checkExistence) throw new httpError(404, 'user doesn`t exists');
+    if (!user && !checkExistence) throw new HttpError('user doesn`t exists', 400);
 
-    return userDB;
+    return user!;
 };

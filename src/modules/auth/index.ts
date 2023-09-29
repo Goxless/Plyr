@@ -8,7 +8,9 @@ import { logout } from './handlers/logout';
 import { forget } from './handlers/forget';
 import { reset } from './handlers/reset';
 import { refresh } from './handlers/refresh';
-import { verifyAuthorization } from '@/middlewares/authMiddleware';
+
+/** @module middlewares */
+import { verifyAuthorization } from '@/middlewares/auth';
 
 export const auth = () => {
     const router = new Router({ prefix: '/auth' });

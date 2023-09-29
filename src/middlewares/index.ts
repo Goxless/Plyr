@@ -1,2 +1,2 @@
-export * from './authMiddleware';
-export * from './validationMiddleware';
+export * from './auth';
+export * from './validation';

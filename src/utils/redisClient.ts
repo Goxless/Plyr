@@ -1,11 +1,13 @@
 /** @module npm */
 import redis from 'redis';
 
-const redisClient = redis.createClient({
+const options = {
     url: `redis://${process.env.REDIS_CLIENT_NAME}:${process.env.REDIS_CLIENT_PASS}
             @${process.env.REDIS_URL}:${process.env.REDIS_PORT}`,
-});
+};
+
+const redisClient = redis.createClient(options);
 
 await redisClient.connect();
 
-export default redisClient;
+export { redisClient as redis };

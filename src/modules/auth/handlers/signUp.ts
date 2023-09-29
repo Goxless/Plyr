@@ -5,9 +5,9 @@ import type { Context } from 'koa';
 import ms from 'ms';
 
 /** @module libs */
-import redisClient from '@/utils/redisClient';
+import { redis } from '@/utils/redisClient';
 import { hashPassword } from '@/libs/utils';
-import prisma from '@/utils/prismaClient';
+import { prisma } from '@/utils/prismaClient';
 import { generateTokens } from '@/libs/utils/tokens';
 import { userExist } from '@/libs/utils/userExist';
 import { body } from '@/libs/interfaces/body';
@@ -33,7 +33,7 @@ export const signUp = async (ctx: Context): Promise<any> => {
         email: email,
     });
 
-    await redisClient.set(user.id, refreshToken, {
+    await redis.set(user.id, refreshToken, {
         PX: ms(refreshExpiration),
     });
 

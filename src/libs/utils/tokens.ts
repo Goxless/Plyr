@@ -5,7 +5,12 @@ import jwt from 'jsonwebtoken';
 import config from '@config';
 import { payload } from '@/libs/interfaces/JWTpayload';
 
-const { jwtAccessSignature, jwtRefreshSignature, defaultAccessTTL, defaultRefreshTTL } = config;
+const {
+    jwtAccessSignature,
+    jwtRefreshSignature,
+    jwtDefaultAccessTTL,
+    jwtDefaultRefreshTTL,
+} = config;
 
 export const verifyAccessToken = (token: string) => {
     const decoded = jwt.verify(token, jwtAccessSignature);
@@ -14,8 +19,8 @@ export const verifyAccessToken = (token: string) => {
 
 export const generateTokens = (
     payload: payload,
-    accessTokenExpiresIn: string = defaultAccessTTL,
-    refreshTokenExpiresIn: string = defaultRefreshTTL
+    accessTokenExpiresIn: string = jwtDefaultAccessTTL,
+    refreshTokenExpiresIn: string = jwtDefaultRefreshTTL
 ): {
     accessToken: string;
     refreshToken: string;
@@ -32,14 +37,14 @@ export const generateTokens = (
 
 export const generateRefreshToken = (
     payload: object,
-    expirationTime: string = defaultRefreshTTL
+    expirationTime: string = jwtDefaultRefreshTTL
 ): string => {
     return jwt.sign(payload, jwtRefreshSignature, { expiresIn: expirationTime });
 };
 
 export const generateAccessToken = (
     payload: object,
-    expirationTime: string = defaultAccessTTL
+    expirationTime: string = jwtDefaultAccessTTL
 ): string => {
     return jwt.sign(payload, jwtAccessSignature, { expiresIn: expirationTime });
 };

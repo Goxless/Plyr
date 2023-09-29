@@ -5,7 +5,7 @@ import type { Context } from 'koa';
 import ms from 'ms';
 
 /** @module libs */
-import redisClient from '@/utils/redisClient';
+import { redis } from '@/utils/redisClient';
 import { body } from '@/libs/interfaces/body';
 import { checkPassword } from '@/libs/utils/password';
 import { generateTokens } from '@/libs/utils/tokens';
@@ -25,7 +25,7 @@ export const signIn = async (ctx: Context): Promise<any> => {
         email,
     });
 
-    await redisClient.set(user.id, refreshToken, {
+    await redis.set(user.id, refreshToken, {
         PX: ms(refreshExpiration),
     });
 

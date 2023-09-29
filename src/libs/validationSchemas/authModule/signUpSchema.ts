@@ -1,4 +1,4 @@
-const signUpSchema: object = {
+export const signUpSchema: object = {
     email: {
         in: 'body',
         notEmpty: true,
@@ -23,5 +23,3 @@ const signUpSchema: object = {
         },
     },
 };
-
-export default signUpSchema;
