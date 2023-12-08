@@ -1,18 +1,27 @@
 /** @module libs */
 import { prisma } from '@/utils/prismaClient';
+import { User } from '@prisma/client';
 import { HttpError } from '@/utils/httpError';
-import { user } from '../interfaces/userType';
 
-
-
-export const userExist = async (checkExistence: boolean, email: string): Promise<user> => {
-    const user = await prisma.user.findUnique({
+export const userExist = async (
+    shouldExist: boolean,
+    email: string
+): Promise<User> => {
+    const user: any = await prisma.user.findUnique({
         where: { email: email },
+        select: {
+            id: true,
+            email: true,
+            name: true,
+            pass: true,
+        },
     });
 
-    if (user && checkExistence) throw new HttpError('user already exists', 400);
+    if (user && !shouldExist)
+        throw new HttpError('user already exists', 400);
 
-    if (!user && !checkExistence) throw new HttpError('user doesn`t exists', 400);
+    if (!user && shouldExist)
+        throw new HttpError('user doesn`t exists', 404);
 
     return user!;
 };

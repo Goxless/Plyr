@@ -11,6 +11,10 @@ export const verifyAccessToken = (token: string) => {
     const decoded = jwt.verify(token, jwtConfig.accessSignature);
     return decoded;
 };
+export const verifyRefreshToken = (token: string) => {
+    const decoded = jwt.verify(token, jwtConfig.refreshSignature);
+    return decoded;
+};
 
 export const generateTokens = (
     payload: payload,
@@ -23,12 +27,8 @@ export const generateTokens = (
     refreshExpiration: string;
 } => {
     return {
-        accessToken: jwt.sign(payload, jwtConfig.accessSignature, {
-            expiresIn: accessTokenExpiresIn,
-        }),
-        refreshToken: jwt.sign(payload, jwtConfig.refreshSignature, {
-            expiresIn: refreshTokenExpiresIn,
-        }),
+        accessToken: generateAccessToken(payload),
+        refreshToken: generateRefreshToken(payload),
         accessExpiration: accessTokenExpiresIn,
         refreshExpiration: refreshTokenExpiresIn,
     };
