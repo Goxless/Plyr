@@ -1,10 +1,18 @@
 import { getEnvVariable } from '@/libs/utils/getEnvVariable';
+import * as mm from 'music-metadata';
 
 export const config = {
     //app settings
     app: {
         port: getEnvVariable('APP_PORT'),
         ip: getEnvVariable('APP_IP'),
+        staticPath: 'static/',
+        carriersPaths: new Map<string, string | null>([
+            ['body', 'request'],
+            ["params", null],
+            ['query', null],
+            ['files', null],
+        ]),
     },
 
     // databases settings
@@ -33,10 +41,19 @@ export const config = {
 
     //JWT settings
     jwt: {
-        accessSignature: getEnvVariable('JWT_ACCESS_SIGNATURE'),
-        refreshSignature: getEnvVariable('JWT_REFRESH_SIGNATURE'),
+        accessSignature: getEnvVariable(
+            'JWT_ACCESS_SIGNATURE'
+        ),
+        refreshSignature: getEnvVariable(
+            'JWT_REFRESH_SIGNATURE'
+        ),
         defaultAccessTTL: '2h',
         defaultRefreshTTL: '30d',
+    },
+
+    //hash setting
+    hash: {
+        salt: 10,
     },
 
     //Mailer settings
@@ -45,5 +62,35 @@ export const config = {
         port: getEnvVariable('SMTP_PORT'),
         user: getEnvVariable('MAILER_USER'),
         pass: getEnvVariable('MAILER_PASS'),
+    },
+    //music settings
+    music: {
+        path: 'music/',
+        albumImagesPath: 'music/album/images/',
+        tracksPath: 'music/track/',
+        placeholder: 'placeholder.jpg',
+        maxSize: 15 * 1024 * 1024,
+        types: [
+            'mpeg',
+            'apev2',
+            'mp4',
+            'asf',
+            'flac',
+            'ogg',
+            'aiff',
+            'wavpack',
+            'riff',
+            'musepack',
+            'dsf',
+            'dsdiff',
+            'adts',
+            'matroska',
+        ],
+    },
+    //profile settings
+    profile: {
+        path: 'profile/',
+        avatarPath: 'profile/avatar/',
+        placeholder: 'placeholder.jpg',
     },
 };
