@@ -9,3 +9,4 @@ temp/
 coverage/*
 .vscode/
 persistence/
+static/
