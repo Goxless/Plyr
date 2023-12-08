@@ -5,12 +5,14 @@ import bodyParser from 'koa-bodyparser';
 import cors from '@koa/cors';
 import chalk from 'chalk';
 import logger from 'koa-logger';
+//@ts-ignore
+import koaValidator from 'koa-async-validator';
 
 /** @module api */
 import { error } from './api/error';
 import { routes } from './api/routes';
 
-/** @module custom */
+/** @module config */
 import { config } from '@config';
 
 export const server = () => {
