@@ -9,22 +9,59 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("PG_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-// model Product {
-//   id     String @id @default(auto()) @map("_id") @db.ObjectId
-//   title  String
-//   userId String @db.ObjectId
-//   user   User   @relation(fields: [userId], references: [id])
-// }
-
 model User {
-  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
   email     String   @unique
   name      String
   pass      String
+  profile Profile?
 }
+
+model Profile {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  
+  avatarPath String
+
+  playlist Playlist[] 
+  userId String @unique @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Playlist {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  title String
+  author String 
+  length Int
+  coverPath String 
+
+  track Track[] 
+  profileId  String @db.Uuid
+  profile     Profile     @relation(fields: [profileId], references: [id])
+
+  @@unique([title,profileId])
+}
+
+model Track {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  title String @default("unknown")
+  author String @default("unknown")
+  artist String @default("unknown")
+  hash String @unique
+  length Float
+  coverPath String?
+  rootPath String?
+  
+  playlist Playlist []
+}
+
 

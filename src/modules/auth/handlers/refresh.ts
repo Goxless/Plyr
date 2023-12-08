@@ -8,19 +8,24 @@ import ms from 'ms';
 import { redis } from '@/utils/redisClient';
 import { userExist } from '@/libs/utils/userExist';
 import { generateTokens } from '@/libs/utils/tokens';
-import { refreshExist } from '@/libs/utils/refreshExist';
+import { refreshTokenExists } from '@/libs/utils/refreshExist';
 
-export const refresh = async (ctx: Context): Promise<any> => {
+export const refresh = async (
+    ctx: Context
+): Promise<any> => {
     const token = ctx.state.decodedToken;
+    const { id, email } = await userExist(
+        true,
+        token.email
+    );
 
-    const { id, email } = await userExist(false, token.email);
+    await refreshTokenExists(id);
 
-    await refreshExist(id);
-
-    const { accessToken, refreshToken, refreshExpiration } = generateTokens({
-        email: email,
-        id: id,
-    });
+    const { accessToken, refreshToken, refreshExpiration } =
+        generateTokens({
+            email: email,
+            id: id,
+        });
 
     await redis.set(id, refreshToken, {
         PX: ms(refreshExpiration),
@@ -30,8 +35,10 @@ export const refresh = async (ctx: Context): Promise<any> => {
     ctx.body = {
         message: 'refreshed',
         data: {
-            accessToken,
-            refreshToken,
+            tokens: {
+                accessToken,
+                refreshToken,
+            },
         },
     };
 };

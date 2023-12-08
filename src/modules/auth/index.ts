@@ -2,25 +2,73 @@
 import Router from 'koa-router';
 
 /** @module handlers */
-import { signUp } from './handlers/signUp';
-import { signIn } from './handlers/signIn';
-import { logout } from './handlers/logout';
-import { forget } from './handlers/forget';
-import { reset } from './handlers/reset';
-import { refresh } from './handlers/refresh';
+import {
+    signUp,
+    signIn,
+    logout,
+    forget,
+    reset,
+    refresh,
+} from './handlers';
 
 /** @module middlewares */
 import { verifyAuthorization } from '@/middlewares/auth';
+import { verifyRefresh } from '@/middlewares/refresh';
+import { validateSchema } from '@/middlewares';
+
+/** @module schemas */
+import {
+    loginSchema,
+    signUpSchema,
+    emailSchema,
+    passSchema,
+} from '@/libs/zod';
+import { resetSchema } from '@/libs/zod/handlers/auth/reset';
 
 export const auth = () => {
     const router = new Router({ prefix: '/auth' });
 
     return router
-        .post('/signin', signIn)
-        .post('/signup', signUp)
+        .post(
+            '/signin',
+            validateSchema({
+                body: {
+                    schema: loginSchema,
+                },
+            }),
+            signIn
+        )
+        .post(
+            '/signup',
+            validateSchema({
+                body: {
+                    schema: signUpSchema,
+                },
+            }),
+            signUp
+        )
         .post('/logout', verifyAuthorization, logout)
-        .post('/forget', forget)
-        .post('/reset/:link', reset)
-        .post('/refresh', verifyAuthorization, refresh)
+        .post(
+            '/forget',
+            validateSchema({
+                body: {
+                    schema: emailSchema,
+                },
+            }),
+            forget
+        )
+        .post(
+            '/reset/:id',
+            validateSchema({
+                params: {
+                    schema: resetSchema,
+                },
+                body: {
+                    schema: passSchema,
+                },
+            }),
+            reset
+        )
+        .post('/refresh', verifyRefresh, refresh)
         .routes();
 };

@@ -10,13 +10,15 @@ import { hashPassword } from '@/libs/utils';
 import { prisma } from '@/utils/prismaClient';
 import { generateTokens } from '@/libs/utils/tokens';
 import { userExist } from '@/libs/utils/userExist';
-import { body } from '@/modules/auth/types/body';
-import { payload } from '@/libs/interfaces/JWTpayload';
+import { body } from '@/libs/interfaces/userBody';
+
+/** @module config */
+import { config } from '@config';
 
 export const signUp = async (ctx: Context): Promise<any> => {
     const { name, email, pass } = <body>ctx.request.body;
 
-    await userExist(true, email);
+    await userExist(false, email);
 
     const password = await hashPassword(pass);
 
@@ -25,6 +27,11 @@ export const signUp = async (ctx: Context): Promise<any> => {
             name,
             email,
             pass: password,
+            profile: {
+                create: {
+                    avatarPath: config.app.staticPath + config.profile.avatarPath + config.profile.placeholder,
+                },
+            },
         },
     });
 
@@ -38,12 +45,11 @@ export const signUp = async (ctx: Context): Promise<any> => {
     });
 
     ctx.status = 201;
-
     ctx.body = {
         message: 'User created',
         data: {
             tokens: { accessToken, refreshToken },
-            user,
+            user: { email: user.email, name: user.name },
         },
     };
 };
