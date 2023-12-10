@@ -47,7 +47,3 @@ export const updateAvatar = async (ctx: Context): Promise<any> => {
         message: `Avatar updated`,
     };
 };
-
-
-// замутить graphql
-// Проверить Mimetype На img

@@ -38,7 +38,7 @@ model Playlist {
 
   title String
   author String 
-  length Int
+  length Float
   coverPath String 
 
   track Track[] 

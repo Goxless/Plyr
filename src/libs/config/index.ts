@@ -11,7 +11,7 @@ export const config = {
             ['body', 'request'],
             ["params", null],
             ['query', null],
-            ['files', null],
+            ['files', 'request'],
         ]),
     },
 

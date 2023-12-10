@@ -16,21 +16,12 @@ export const detach = async (
 
     const trackIDs = orStatement(tracks);
 
-    const time = await prisma.track.aggregate({
+    const trackLength = await prisma.track.aggregate({
         _sum: {
             length: true,
         },
         where: {
             OR: trackIDs,
-        },
-    });
-
-    const currentLength = await prisma.playlist.findUnique({
-        where: {
-            id: playlistId,
-        },
-        select: {
-            length: true,
         },
     });
 
@@ -42,9 +33,10 @@ export const detach = async (
             track: {
                 disconnect: trackIDs,
             },
-            length:
-                (currentLength?.length as number) -
-                (time._sum?.length as number),
+            length: {
+                decrement: trackLength._sum
+                    .length as number,
+            },
         },
     });
 

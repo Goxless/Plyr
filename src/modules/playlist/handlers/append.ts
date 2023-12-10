@@ -5,6 +5,7 @@ import { IDschema } from '@/libs/zod';
 
 /** @module libs */
 import { prisma } from '@/utils/prismaClient';
+import { generateResponse } from '@/libs/utils/generateResponse';
 
 export const append = async (
     ctx: Context
@@ -20,9 +21,6 @@ export const append = async (
         },
         []
     );
-
-    let totalTime = 0.0;
-
     const trackLength = await prisma.track.aggregate({
         _sum: {
             length: true,
@@ -32,19 +30,6 @@ export const append = async (
         },
     });
 
-    totalTime += trackLength._sum.length as number;
-
-    const currentLength = await prisma.playlist.findUnique({
-        where: {
-            id: playlistId,
-        },
-        select: {
-            length: true,
-        },
-    });
-
-    totalTime = currentLength?.length as number;
-
     await prisma.playlist.update({
         where: {
             id: playlistId,
@@ -53,12 +38,16 @@ export const append = async (
             track: {
                 connect: trackIDs,
             },
-            length: totalTime,
+            length: {
+                increment: trackLength._sum.length!,
+            },
         },
     });
 
-    ctx.status = 200;
-    ctx.body = {
-        message: 'playlist updated',
-    };
+    generateResponse(ctx, {
+        body: {
+            message: 'playlist updated',
+        },
+        status: 200,
+    });
 };

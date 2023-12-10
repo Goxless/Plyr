@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Playlist" ALTER COLUMN "length" SET DATA TYPE DOUBLE PRECISION;

@@ -10,19 +10,21 @@ import { prisma } from '@/utils/prismaClient';
 import { generateResponse } from '@/libs/utils/generateResponse';
 import { uploadFile } from '@/libs/fs/uploadFile';
 import { HttpError } from '@/utils/httpError';
+import { config } from '@/libs/config';
 
 export const upload = async (
     ctx: Context
 ): Promise<any> => {
     const { name } = ctx.state.decodedToken;
 
-    const { track } = ctx.files;
+    const { track } = ctx.request.files!;
 
     const { filepath = '' } = { ...track };
 
     const { dist, buffer } = await uploadFile(
         ctx,
-        filepath
+        filepath,
+        `${config.app.staticPath}${config.music.tracksPath}/`
     );
 
     const { common, format } = await mm.parseFile(dist);

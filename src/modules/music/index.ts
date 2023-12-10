@@ -28,7 +28,6 @@ export const music = () => {
             validateSchema({
                 files: {
                     schema: TrackFileSchema,
-                    additionalPath: 'request',
                 },
             }),
             upload

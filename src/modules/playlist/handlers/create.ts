@@ -6,11 +6,11 @@ import { PlaylistSchema } from '@/libs/zod/handlers/playlist/create';
 /** @module libs */
 import { config } from '@/libs/config';
 import { prisma } from '@/utils/prismaClient';
+import { generateResponse } from '@/libs/utils/generateResponse';
 
 export const create = async (
     ctx: Context
 ): Promise<any> => {
-    console.log(ctx.request.body);
     const { title, tracks = [] } = <PlaylistSchema>(
         ctx.request.body
     );
@@ -43,7 +43,7 @@ export const create = async (
                 config.music.path +
                 config.music.placeholder,
             profile: {
-                connect: { id },
+                connect: { userId: id },
             },
         },
         select: {
@@ -60,16 +60,18 @@ export const create = async (
                 track: {
                     connect: trackIDs,
                 },
-                length: 0.0 + (time._sum.length as number),
+                length: 0 + (time._sum.length as number),
             },
         });
     }
 
-    ctx.status = 201;
-    ctx.body = {
-        message: 'playlist created',
-        data: {
-            playlist,
+    generateResponse(ctx, {
+        body: {
+            message: 'playlist created',
+            data: {
+                playlist,
+            },
         },
-    };
+        status: 201,
+    });
 };

@@ -7,11 +7,10 @@ import { sendFile } from '@/libs/fs/sendFile';
 import { checkForExistance } from '@/libs/prisma/checkEntityExistance';
 import { HttpError } from '@/utils/httpError';
 
-
 export const download = async (
     ctx: Context
 ): Promise<any> => {
-    const { id: trackId } = <IDschema>ctx.params;
+    const { id: trackId } = <IDschema>ctx.query;
 
     const track = await checkForExistance(
         'Track',

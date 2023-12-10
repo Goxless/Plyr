@@ -15,7 +15,8 @@ import { fileTypeFromBuffer } from 'file-type';
 
 export const uploadFile = async (
     ctx: Context,
-    filepath: string
+    filepath: string,
+    dist: string
 ): Promise<any> => {
     const buffer = await promisify(fs.readFile)(filepath);
     const types = await fileTypeFromBuffer(buffer);
@@ -23,9 +24,7 @@ export const uploadFile = async (
     const write = promisify(fs.copyFile);
     const remove = promisify(fs.rm);
 
-    const dist: string = `${config.app.staticPath}${
-        config.music.tracksPath
-    }/${ctx.state.decodedToken.id}.${types!.ext}`;
+    dist += `${ctx.state.decodedToken.id}.${types!.ext}`;
 
     await write(filepath, dist);
 
