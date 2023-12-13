@@ -45,7 +45,11 @@ services:
         ports:
             - ${APP_PORT}:8000
         volumes:
-            - './persistence/nodeApp/static:/usr/src/app/static'
+            - './persistence/nodeApp/static/:/usr/src/app/static/'
+            - './persistence/nodeApp/static/music/track:/usr/src/app/static/music/track'
+            - './persistence/nodeApp/static/music/album/images/placeholder.jpg:/usr/src/app/static/music/album/images/placeholder.jpg'
+            - './persistence/nodeApp/static/profile/avatar/placeholder.jpg:/usr/src/app/static/profile/avatar/placeholder.jpg'
+
         environment:
             - PG_DATABASE_URL = postgres
             - REDIS_URL =  redis
