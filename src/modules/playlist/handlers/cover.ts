@@ -16,7 +16,8 @@ import { HttpError } from '@/utils/httpError';
 
 export const cover = async (ctx: Context): Promise<any> => {
     const folderPath: String =
-        config.app.staticPath + config.music.path;
+        config.app.staticPath +
+        config.music.albumImagesPath;
 
     const { id: playlistId } = <IDschema>ctx.params;
     const { id: userId } = <User>ctx.state.decodedToken;
@@ -27,9 +28,9 @@ export const cover = async (ctx: Context): Promise<any> => {
     )
         throw new HttpError('no files to upload', 400);
 
-    const avatar = ctx.request.files.avatar;
+    const cover = ctx.request.files.cover;
 
-    const { filepath = '' } = { ...avatar };
+    const { filepath = '' } = { ...cover };
 
     const types = await fileTypeFromBuffer(
         fs.readFileSync(filepath)

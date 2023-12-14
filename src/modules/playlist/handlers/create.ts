@@ -40,7 +40,7 @@ export const create = async (
             length: 0,
             coverPath:
                 config.app.staticPath +
-                config.music.path +
+                config.music.albumImagesPath +
                 config.music.placeholder,
             profile: {
                 connect: { userId: id },

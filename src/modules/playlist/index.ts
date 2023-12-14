@@ -1,5 +1,6 @@
 /** @module npm */
 import Router from 'koa-router';
+import {koaBody} from 'koa-body';
 
 /** @module middlewares */
 import { verifyAuthorization } from '@/middlewares';
@@ -38,7 +39,11 @@ export const playlist = () => {
             validateDB('Playlist', 'params', 'id', 'id'),
             lookup
         )
-        .put('/:id/cover', cover)
+        .put(
+            '/:id/cover',
+            koaBody({ multipart: true }),
+            cover
+        )
         .post(
             '/create',
             validateSchema({
