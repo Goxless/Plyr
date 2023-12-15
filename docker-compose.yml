@@ -47,8 +47,8 @@ services:
         volumes:
             - './persistence/nodeApp/static/:/usr/src/app/static/'
             - './persistence/nodeApp/static/music/track:/usr/src/app/static/music/track'
-            - './persistence/nodeApp/static/music/album/images/placeholder.jpg:/usr/src/app/static/music/album/images/placeholder.jpg'
-            - './persistence/nodeApp/static/profile/avatar/placeholder.jpg:/usr/src/app/static/profile/avatar/placeholder.jpg'
+            - './persistence/nodeApp/static/music/album/images:/usr/src/app/static/music/album/images'
+            - './persistence/nodeApp/static/profile/avatar:/usr/src/app/static/profile/avatar'
 
         environment:
             - PG_DATABASE_URL = postgres
